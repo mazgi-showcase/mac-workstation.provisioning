@@ -1,0 +1,6 @@
+- debug:
+    var: ansible_facts
+
+- name: Import macOS specific provisioning
+  import_tasks: darwin.yml
+  when: ansible_os_family == 'Darwin'
