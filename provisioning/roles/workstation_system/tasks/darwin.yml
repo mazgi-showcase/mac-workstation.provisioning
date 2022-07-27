@@ -1,2 +1,5 @@
-- debug:
-    msg: Hi, I'm macOS
+# - debug:
+#     msg: Hi, I'm macOS
+
+- name: Install Homebrew
+  import_tasks: darwin.homebrew.yml

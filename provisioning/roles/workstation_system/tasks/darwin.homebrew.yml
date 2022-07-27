@@ -1,0 +1,65 @@
+# See https://github.com/Homebrew/brew/issues/9177
+- name: Stat Homebrew(Apple Silicon)
+  stat:
+    path: /opt/homebrew/bin/brew
+  register: brew_command_arm64
+  when:
+    - ansible_machine == 'arm64'
+- name: Stat Homebrew(Intel)
+  stat:
+    path: /usr/local/bin/brew
+  register: brew_command_x86_64
+  when:
+    - ansible_machine == 'x86_64'
+
+- name: Set up Homebrew
+  when:
+    - brew_command_arm64.stat.executable is not defined
+    - brew_command_x86_64.stat.executable is not defined
+  block:
+    - name: Disable sudo password
+      copy:
+        dest: /etc/sudoers.d/disable_sudo_password
+        content: |
+          {{ ansible_user_id }} ALL=(ALL:ALL) NOPASSWD: ALL
+      become: true
+    - name: Disable sudo timeout
+      copy:
+        dest: /etc/sudoers.d/disable_timestamp_timeout
+        content: |
+          Defaults timestamp_timeout=-1
+      become: true
+    - name: Download Homebrew install script
+      uri:
+        url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+        return_content: true
+      register: brew_install_script
+    - name: Install Homebrew
+      shell: "{{ brew_install_script.content }}"
+      args:
+        executable: /bin/bash
+      environment:
+        # See https://docs.brew.sh/Installation#unattended-installation
+        NONINTERACTIVE: 1
+    # See https://github.com/Homebrew/brew/issues/9177
+    - name: Add the path to PATH environment variable(Apple Silicon)
+      copy:
+        dest: /etc/paths.d/homebrew.sh
+        content: |
+          /opt/homebrew/bin
+      become: true
+      when:
+        - ansible_machine == 'arm64'
+
+- name: Enable sudo password
+  file:
+    path: /etc/sudoers.d/disable_sudo_password
+    state: absent
+  become: true
+  ignore_errors: true
+- name: Enable sudo timeout
+  file:
+    path: /etc/sudoers.d/disable_timestamp_timeout
+    state: absent
+  become: true
+  ignore_errors: true

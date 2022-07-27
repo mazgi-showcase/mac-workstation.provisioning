@@ -1,0 +1,12 @@
+- name: prepare
+  hosts: all
+  gather_facts: no
+  vars_prompt:
+    - name: show the message
+      prompt: >
+        Please click the "Install" button on your target Mac's screen and complete the installation of Developer Tools.
+        Press enter to continue...
+  tasks:
+    - name: Install Command Line Tools for Xcode (needs physical screen)
+      raw: |
+        xcode-select --install
