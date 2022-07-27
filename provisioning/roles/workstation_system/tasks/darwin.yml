@@ -1,2 +1,14 @@
 - debug:
     msg: Hi, I'm macOS
+
+- name: Set up Homebrew
+  block:
+    - name: Download Homebrew install script
+      uri:
+        url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+        return_content: true
+      register: brew_install_script
+    - name: Install Homebrew
+      shell: "{{ brew_install_script.content }}"
+      args:
+        executable: /bin/bash
