@@ -3,3 +3,5 @@
 
 - name: Install Homebrew
   import_tasks: darwin.homebrew.yml
+- name: Install Homebrew
+  import_tasks: darwin.homebrew-packages.yml

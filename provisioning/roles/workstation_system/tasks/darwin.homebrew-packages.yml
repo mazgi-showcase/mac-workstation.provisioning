@@ -1,0 +1,24 @@
+- name: Tap Homebrew Taps
+  homebrew_tap:
+    name: "{{ item }}"
+  with_items:
+    - homebrew/cask
+    - homebrew/core
+- name: Install packages from Homebrew Casks
+  homebrew_cask:
+    name:
+      - 1password
+      - 1password-cli
+      - visual-studio-code
+      - vlc
+
+- name: Install packages from Homebrew
+  homebrew:
+    name:
+      - gh
+      - git-lfs
+      - jq
+      - mas
+      - nkf
+      - tmux
+      - tree
