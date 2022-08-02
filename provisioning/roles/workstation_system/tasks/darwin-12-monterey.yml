@@ -1,2 +1,6 @@
-- debug:
-    var: ansible_facts
+- name: Import macOS Monterey specific provisioning - Desktop and Appearances
+  import_tasks: darwin-12-monterey.desktop-and-appearances.yml
+- name: Import macOS Monterey specific provisioning - HID
+  import_tasks: darwin-12-monterey.hid.yml
+- name: Import macOS Monterey specific provisioning - Power Option
+  import_tasks: darwin-12-monterey.power-options.yml
