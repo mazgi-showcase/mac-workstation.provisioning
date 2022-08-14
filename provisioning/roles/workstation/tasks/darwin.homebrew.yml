@@ -3,12 +3,14 @@
   stat:
     path: /opt/homebrew/bin/brew
   register: brew_command_arm64
+  check_mode: False
   when:
     - ansible_machine == 'arm64'
 - name: Stat Homebrew(Intel)
   stat:
     path: /usr/local/bin/brew
   register: brew_command_x86_64
+  check_mode: False
   when:
     - ansible_machine == 'x86_64'
 
@@ -41,6 +43,7 @@
       environment:
         # See https://docs.brew.sh/Installation#unattended-installation
         NONINTERACTIVE: 1
+      when: brew_install_script is defined
     # See https://github.com/Homebrew/brew/issues/9177
     - name: Add the path to PATH environment variable(Apple Silicon)
       copy:

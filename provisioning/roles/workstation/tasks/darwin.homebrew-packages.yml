@@ -1,24 +1,64 @@
 - name: Tap Homebrew Taps
-  homebrew_tap:
+  community.general.packaging.os.homebrew_tap:
     name: "{{ item }}"
   with_items:
     - homebrew/cask
     - homebrew/core
 - name: Install packages from Homebrew Casks
-  homebrew_cask:
+  community.general.packaging.os.homebrew_cask:
     name:
       - 1password
       - 1password-cli
+      - docker
+      - google-chrome
       - visual-studio-code
-      - vlc
+
+- name: Install specific packages from Homebrew Casks
+  community.general.packaging.os.homebrew_cask:
+    name: "{{ item.name }}"
+  with_items: "{{ specific_homebrew_cask_packages }}"
 
 - name: Install packages from Homebrew
-  homebrew:
+  community.general.packaging.os.homebrew:
     name:
+      - bat
       - gh
       - git-lfs
+      - htop
       - jq
       - mas
       - nkf
+      - starship
       - tmux
       - tree
+
+- name: Install specific packages from Homebrew
+  community.general.packaging.os.homebrew:
+    name: "{{ item.name }}"
+  with_items: "{{ specific_homebrew_packages }}"
+
+# See also https://github.com/mas-cli/mas/issues/417
+- name: Get the sign-in status of your Apple ID
+  command: |
+    defaults read MobileMeAccounts Accounts
+  register: _MobileMeAccounts_Accounts
+  check_mode: False
+  changed_when: False
+  failed_when: False
+
+# See also https://github.com/mas-cli/mas
+- name: Install packages from Mac App Store
+  community.general.mas:
+    id:
+      - 803453959 # Slack
+  environment:
+    PATH: /usr/local/bin:"{{ ansible_facts.env.PATH }}"
+  when: _MobileMeAccounts_Accounts.rc == 0
+
+- name: Install specific packages from Mac App Store
+  community.general.mas:
+    id: "{{ item.id }}"
+  environment:
+    PATH: /usr/local/bin:"{{ ansible_facts.env.PATH }}"
+  with_items: "{{ specific_mas_packages }}"
+  when: _MobileMeAccounts_Accounts.rc == 0
