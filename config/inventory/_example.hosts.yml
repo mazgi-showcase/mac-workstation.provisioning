@@ -1,0 +1,10 @@
+all:
+  children:
+    prod:
+      hosts:
+        macos12-1.local:
+          ansible_ssh_host: 192.168.0.1
+    dev:
+      hosts:
+        macos12-dev-1.local:
+          ansible_ssh_host: 192.168.1.1
