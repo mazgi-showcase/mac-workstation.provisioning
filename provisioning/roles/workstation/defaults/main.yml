@@ -1,0 +1,23 @@
+ansible_user: user
+
+specific_homebrew_packages:
+  - name: fping
+  - name: pwgen
+
+specific_homebrew_cask_packages:
+  - name: firefox
+  - name: vivaldi
+
+specific_mas_packages:
+  - id: 803453959
+    _memo: Slack
+
+git_config_list:
+  - name: core.excludesfile
+    value: ~/.gitignore
+  - name: core.editor
+    value: vim
+  - name: user.name
+    value: Octocat
+  - name: user.email
+    value: octocat@github.com

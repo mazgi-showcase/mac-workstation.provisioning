@@ -1,4 +1,4 @@
 - name: set up workstations
   hosts: all
   roles:
-    - role: workstation_system
+    - role: workstation
