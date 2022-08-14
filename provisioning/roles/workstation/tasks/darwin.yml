@@ -1,0 +1,16 @@
+- name: Import macOS Monterey specific provisioning
+  import_tasks: darwin-12-monterey.yml
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - ansible_facts['distribution_major_version'] == '12'
+- name: Import macOS Big Sur specific provisioning
+  import_tasks: darwin-11-bigsur.yml
+  when:
+    - ansible_facts['os_family'] == 'Darwin'
+    - ansible_facts['distribution_major_version'] == '11'
+
+# Homebrew
+- name: Install Homebrew
+  import_tasks: darwin.homebrew.yml
+- name: Install Homebrew
+  import_tasks: darwin.homebrew-packages.yml

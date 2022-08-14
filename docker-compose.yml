@@ -8,9 +8,10 @@ x-service-provisioning-base: &provisioning-base
     - zsh
     - -ic
     - |
+      ansible-galaxy install -r requirements.yml
       sleep infinity
   environment:
-    CURRENT_ENV_NAME: ${CURRENT_ENV_NAME:-production}
+    ANSIBLE_CONFIG: /project/config/ansible.cfg
   user: "${UID:-0}:${GID:-0}"
   volumes:
     - provisioning-home-developer:/home/developer

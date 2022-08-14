@@ -1,0 +1,6 @@
+- name: Import macOS Big Sur specific provisioning - Desktop and Appearances
+  import_tasks: darwin-11-bigsur.desktop-and-appearances.yml
+- name: Import macOS Big Sur specific provisioning - HID
+  import_tasks: darwin-11-bigsur.hid.yml
+- name: Import macOS Big Sur specific provisioning - Power Option
+  import_tasks: darwin-11-bigsur.power-options.yml

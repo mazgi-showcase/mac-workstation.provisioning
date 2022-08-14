@@ -1,0 +1,12 @@
+- name: Set up Power Options
+  block:
+    - name: Set Power Options for AC Chager
+      become: true
+      shell: |
+        pmset -c sleep 0
+        pmset -c displaysleep 60
+    - name: Set Power Options for Battery
+      become: true
+      shell: |
+        pmset -b sleep 60
+        pmset -b displaysleep 60

@@ -10,3 +10,5 @@
     - name: Install Command Line Tools for Xcode (needs physical screen)
       raw: |
         xcode-select --install
+      changed_when: False
+      failed_when: False
