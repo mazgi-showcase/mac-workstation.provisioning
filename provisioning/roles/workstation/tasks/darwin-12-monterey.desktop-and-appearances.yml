@@ -12,37 +12,78 @@
 - name: Set up Hotcorners
   block:
     - name: Set top-left
-      become: false
-      shell: |
-        defaults write com.apple.dock wvous-tl-corner -int 0
-        defaults write com.apple.dock wvous-tl-modifier -int 0
+      block:
+        - community.general.system.osx_defaults:
+            domain: com.apple.dock
+            key: wvous-tl-corner
+            type: int
+            value: 6
+        - community.general.system.osx_defaults:
+            domain: com.apple.dock
+            key: wvous-tl-modifier
+            type: int
+            value: 0
     - name: Set top-right
-      become: false
-      shell: |
-        defaults write com.apple.dock wvous-tr-corner -int 0
-        defaults write com.apple.dock wvous-tr-modifier -int 0
+      block:
+        - community.general.system.osx_defaults:
+            domain: com.apple.dock
+            key: wvous-tr-corner
+            type: int
+            value: 6
+        - community.general.system.osx_defaults:
+            domain: com.apple.dock
+            key: wvous-tr-modifier
+            type: int
+            value: 0
     - name: Set bottom-left
-      become: false
-      shell: |
-        defaults write com.apple.dock wvous-bl-corner -int 6
-        defaults write com.apple.dock wvous-bl-modifier -int 0
+      block:
+        - community.general.system.osx_defaults:
+            domain: com.apple.dock
+            key: wvous-bl-corner
+            type: int
+            value: 6
+        - community.general.system.osx_defaults:
+            domain: com.apple.dock
+            key: wvous-bl-modifier
+            type: int
+            value: 0
     - name: Set bottom-right
-      become: false
-      shell: |
-        defaults write com.apple.dock wvous-br-corner -int 0
-        defaults write com.apple.dock wvous-br-modifier -int 0
+      block:
+        - community.general.system.osx_defaults:
+            domain: com.apple.dock
+            key: wvous-br-corner
+            type: int
+            value: 6
+        - community.general.system.osx_defaults:
+            domain: com.apple.dock
+            key: wvous-br-modifier
+            type: int
+            value: 0
 
 - name: Set up Dock
   block:
     - name: Remove all icons from Dock
-      become: false
-      shell: |
-        defaults write com.apple.dock persistent-apps -array
-    # icon size: 16 - 128
+      community.general.system.osx_defaults:
+        domain: com.apple.dock
+        key: persistent-apps
+        type: array
+        value: []
+    # Possible icon size: 16 - 128
     - name: Set icon size to 16
-      become: false
-      shell: |
-        defaults write com.apple.dock tilesize -int 16
+      community.general.system.osx_defaults:
+        domain: com.apple.dock
+        key: tilesize
+        type: int
+        value: 16
+
+- name: Set up Mission Control
+  block:
+    - name: (Todo:)Disable auto rearrange workspaces
+      community.general.system.osx_defaults:
+        domain: com.apple.dock
+        key: mru-spaces
+        type: bool
+        value: False
 
 - name: Apply changes
   become: true

@@ -1,20 +1,66 @@
 - name: Set up Trackpad
   block:
     - name: Enable clicking
-      become: false
       shell: |
         defaults write com.apple.AppleMultitouchTrackpad.plist Clicking -int 1
         defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad.plist Clicking -int 1
     - name: Enable three finger drag
-      become: false
       shell: |
         defaults write com.apple.AppleMultitouchTrackpad.plist TrackpadThreeFingerDrag -int 1
         defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad.plist TrackpadThreeFingerDrag -int 1
 
-- name: Set up Keyboard
+- name: Set up the Keyboard - Enable Sticky-keys
   block:
+    - name: (Todo:)Get the Sticky-keys status
+      shell: |
+        :
     - name: Enable Sticky-keys
-      become: false
       shell: |
         defaults write com.apple.universalaccess.plist stickyKey -bool true
         defaults write com.apple.universalaccess.plist useStickyKeysShortcutKeys -bool true
+
+- name: Set up the Keyboard - Swap Caps-Lock to CTRL
+  block:
+    # ❯ ioreg -c AppleEmbeddedKeyboard -d 1 -k VendorID -k ProductID -r
+    # +-o AppleHIDKeyboardEventDriverV2  <class AppleHIDKeyboardEventDriverV2, id 0x1000128c3, registered, matched, active, busy 0 (1 ms), retain 8>
+    #     {
+    #       ...
+    #       "VendorID" = 1452
+    #       ...
+    #       "ProductID" = 638
+    #       ...
+    #     }
+    - name: Get the Keyboard ProductID
+      shell: |
+        ioreg -c AppleEmbeddedKeyboard -d 1 -r | grep --word-regexp 'ProductID' | awk '{print $3}'
+      register: _AppleEmbeddedKeyboard_ProductID
+      check_mode: False
+      changed_when: False
+    - name: Get the Keyboard VendorID
+      shell: |
+        ioreg -c AppleEmbeddedKeyboard -d 1 -r | grep --word-regexp 'VendorID' | awk '{print $3}'
+      register: _AppleEmbeddedKeyboard_VendorID
+      check_mode: False
+      changed_when: False
+    - name: Store the Keyboard VendorID and ProductID
+      set_fact:
+        AppleEmbeddedKeyboard:
+          ProductID: "{{ _AppleEmbeddedKeyboard_ProductID.stdout_lines[0] }}"
+          VendorID: "{{ _AppleEmbeddedKeyboard_VendorID.stdout_lines[0] }}"
+    - name: Get current status of Modifier Keys
+      command: |
+        defaults -currentHost read NSGlobalDomain com.apple.keyboard.modifiermapping.{{ AppleEmbeddedKeyboard.VendorID }}-{{ AppleEmbeddedKeyboard.ProductID }}-0
+      register: _AppleEmbeddedKeyboard_current_modifiermapping
+      check_mode: False
+      changed_when: False
+      failed_when: False
+    - name: Change Caps-Lock to CTRL
+      community.general.system.osx_defaults:
+        host: currentHost
+        key: com.apple.keyboard.modifiermapping.{{ AppleEmbeddedKeyboard.VendorID }}-{{ AppleEmbeddedKeyboard.ProductID }}-0
+        type: array
+        value:
+          - "<dict><key>HIDKeyboardModifierMappingDst</key><integer>30064771300</integer><key>HIDKeyboardModifierMappingSrc</key><integer>30064771129</integer></dict>"
+      when: '_AppleEmbeddedKeyboard_current_modifiermapping.rc != 0
+        or " HIDKeyboardModifierMappingDst = 30064771300;" not in _AppleEmbeddedKeyboard_current_modifiermapping.stdout
+        or " HIDKeyboardModifierMappingSrc = 30064771129;" not in _AppleEmbeddedKeyboard_current_modifiermapping.stdout'
