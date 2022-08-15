@@ -8,7 +8,6 @@ x-service-provisioning-base: &provisioning-base
     - zsh
     - -ic
     - |
-      ansible-galaxy install -r requirements.yml
       sleep infinity
   environment:
     ANSIBLE_CONFIG: /project/config/ansible.cfg
