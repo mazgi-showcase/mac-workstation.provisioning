@@ -1,19 +1,16 @@
 - name: Set up Trackpad
   block:
     - name: Enable clicking
-      become: false
       shell: |
         defaults write com.apple.AppleMultitouchTrackpad.plist Clicking -int 1
         defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad.plist Clicking -int 1
     - name: Enable three finger drag
-      become: false
       shell: |
         defaults write com.apple.AppleMultitouchTrackpad.plist TrackpadThreeFingerDrag -int 1
         defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad.plist TrackpadThreeFingerDrag -int 1
 - name: Set up Keyboard
   block:
     - name: Enable Sticky-keys
-      become: false
       shell: |
         defaults write com.apple.universalaccess.plist stickyKey -bool true
         defaults write com.apple.universalaccess.plist useStickyKeysShortcutKeys -bool true
