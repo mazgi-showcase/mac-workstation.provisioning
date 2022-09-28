@@ -1,4 +1,6 @@
 - name: Gather commands that exist on the host
+  tags:
+    - maintain-packages
   block:
     - shell: zsh -lc "which {{ item }}"
       register: _has_commands
@@ -7,6 +9,9 @@
       changed_when: False
       with_items:
         - aws_completer
+        - direnv
+        - go
+        - op
         - terraform
         - starship
     - set_fact:
@@ -33,18 +38,22 @@
     value: "{{ item.value }}"
   with_items: "{{ git_config_list }}"
 
-- name: Define variables for dotfiles
-  set_fact:
-    dotfiles_modes:
-      .zshrc.j2: "0600"
-  check_mode: False
-- name: dotfiles
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ ansible_env.HOME }}/{{ item.path | regex_replace('\\.j2$', '') }}"
-    mode: "{{ dotfiles_modes[item.src] | default('0600') }}"
-  when: item.state == 'file'
-  with_filetree: "{{ role_path }}/templates/~"
+- name: Configure dotfiles
+  tags:
+    - maintain-packages
+  block:
+    - name: Define variables for dotfiles
+      set_fact:
+        dotfiles_modes:
+          .zshrc.j2: "0600"
+      check_mode: False
+    - name: dotfiles
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ ansible_env.HOME }}/{{ item.path | regex_replace('\\.j2$', '') }}"
+        mode: "{{ dotfiles_modes[item.src] | default('0600') }}"
+      when: item.state == 'file'
+      with_filetree: "{{ role_path }}/templates/~"
 
 # See also https://zsh.sourceforge.io/Doc/Release/index.html
 - name: Set up Z-shell

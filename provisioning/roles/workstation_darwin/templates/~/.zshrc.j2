@@ -52,6 +52,10 @@ alias -g G='| grep '
 alias -g M='| more '
 alias -g V='| vim -R -'
 
+{% if 'go' in commands %}
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+{% endif %}
 {% if 'aws_completer' in commands %}
 # https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-completion.html#cli-command-completion-linux
 complete -C aws_completer aws
@@ -65,6 +69,13 @@ fi
 if [[ -f /usr/share/google-cloud-sdk/completion.zsh.inc ]]; then
   source /usr/share/google-cloud-sdk/completion.zsh.inc
 fi
+{% endif %}
+{% if 'direnv' in commands %}
+eval "$(direnv hook zsh)"
+{% endif %}
+{% if 'op' in commands %}
+# https://developer.1password.com/docs/cli/get-started#shell-completion
+eval "$(op completion zsh)"; compdef _op op
 {% endif %}
 {% if 'terraform' in commands %}
 # https://www.terraform.io/cli/commands#shell-tab-completion

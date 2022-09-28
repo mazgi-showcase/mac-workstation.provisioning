@@ -5,25 +5,31 @@
     - homebrew/cask
     - homebrew/core
 - name: Install packages from Homebrew Casks
+  tags:
+    - maintain-packages
   community.general.packaging.os.homebrew_cask:
     name:
       - 1password
       - 1password-cli
       - docker
+      - firefox
       - google-chrome
       - visual-studio-code
-
 - name: Install specific packages from Homebrew Casks
   community.general.packaging.os.homebrew_cask:
     name: "{{ item.name }}"
   with_items: "{{ specific_homebrew_cask_packages }}"
 
 - name: Install packages from Homebrew
+  tags:
+    - maintain-packages
   community.general.packaging.os.homebrew:
     name:
       - bat
+      - coreutils # for timeout, and others
       - gh
       - git-lfs
+      - go
       - htop
       - jq
       - mas
@@ -31,6 +37,7 @@
       - starship
       - tmux
       - tree
+      - yq
 
 - name: Install specific packages from Homebrew
   community.general.packaging.os.homebrew:
